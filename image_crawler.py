@@ -3,11 +3,21 @@ import requests
 import webbrowser
 import urllib.request
 import os
+import time
 from bs4 import BeautifulSoup
+from selenium import webdriver
+
+url = 'https://www.google.com/search?q=dog&rlz=1C1SQJL_enKR858KR858&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjvyIThp8_qAhUcwosBHb2ZDwAQ_AUoAXoECBgQAw&biw=1920&bih=937'
+
+# test opening browser
+driver = webdriver.Chrome("./chromedriver")
+driver.get(url)
+time.sleep(5)
+driver.quit()
+
 
 # check if url is valid
 
-url = "https://www.google.com/search?q=dog&rlz=1C1SQJL_enKR858KR858&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjvyIThp8_qAhUcwosBHb2ZDwAQ_AUoAXoECBgQAw&biw=1920&bih=937"
 img_dir = "./image_folder/"
 dir_path = img_dir + "test"
 # make dir
@@ -64,7 +74,7 @@ def test_multiple(urls):
             print ("failed at: " + str(i))
     
 
-get_images(url)
+# get_images(url)
 # change plan
 # cannot fully download images without opening webbrowser. 
 # No netlify, just build normal crawler
