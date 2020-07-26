@@ -6,14 +6,28 @@ import os
 import time
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 url = 'https://www.google.com/search?q=dog&rlz=1C1SQJL_enKR858KR858&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjvyIThp8_qAhUcwosBHb2ZDwAQ_AUoAXoECBgQAw&biw=1920&bih=937'
 
 # test opening browser
 driver = webdriver.Chrome("./chromedriver")
 driver.get(url)
-time.sleep(5)
-driver.quit()
+
+element = driver.find_element_by_tag_name("body")
+element.send_keys(Keys.PAGE_DOWN)
+
+
+# while driver.find_element_by_tag_name('div'):
+#     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+#     # Divs=driver.find_element_by_tag_name('div').text
+#     Divs = driver.find_element_by_name('Show more results')
+#     # if (driver.find_element_by_name("Show more results")):
+#     #     print('found')
+#     # else:
+#     #     continue
+# time.sleep(5)
+# driver.quit()
 
 
 # check if url is valid
