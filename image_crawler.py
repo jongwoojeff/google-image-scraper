@@ -11,10 +11,19 @@ from selenium.webdriver.common.keys import Keys
 url = 'https://www.google.com/search?q=dog&rlz=1C1SQJL_enKR858KR858&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjvyIThp8_qAhUcwosBHb2ZDwAQ_AUoAXoECBgQAw&biw=1920&bih=937'
 
 # test opening browser
+print("opening URL")
+print("How many images?")
+image_cnt = input()
+print("Getting " + str(image_cnt) + " images...")
 driver = webdriver.Chrome("./chromedriver")
 driver.get(url)
 
 element = driver.find_element_by_tag_name("body")
+
+# get img tags and while it is less than cnt
+# keep scrolling and add to img array
+# check if same src img tag exist
+element.send_keys(Keys.PAGE_DOWN)
 element.send_keys(Keys.PAGE_DOWN)
 
 
