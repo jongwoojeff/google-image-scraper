@@ -20,24 +20,7 @@ driver.get(url)
 
 element = driver.find_element_by_tag_name("body")
 
-# get img tags and while it is less than cnt
-# keep scrolling and add to img array
-# check if same src img tag exist
-element.send_keys(Keys.PAGE_DOWN)
-element.send_keys(Keys.PAGE_DOWN)
-
-
-# while driver.find_element_by_tag_name('div'):
-#     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-#     # Divs=driver.find_element_by_tag_name('div').text
-#     Divs = driver.find_element_by_name('Show more results')
-#     # if (driver.find_element_by_name("Show more results")):
-#     #     print('found')
-#     # else:
-#     #     continue
-# time.sleep(5)
-# driver.quit()
-
+urls = []
 
 # check if url is valid
 
@@ -50,13 +33,14 @@ if not os.path.exists(dir_path):
 def make_soup(url):
     # Using headers to avoid getting detected as a bot
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    html = urllib.request.urlopen(req).read()
+    # html = urllib.request.urlopen(req).read()
+    html = driver.page_source
     # html = urllib.request.urlopen(url)
     return BeautifulSoup(html, 'html.parser')
 
 def get_images(url):
     soup = make_soup(url)
-    urls = []
+    # urls = []
     images = [img for img in soup.findAll('img')]
     print (str(len(images)) + "images found.")
     
@@ -96,7 +80,9 @@ def test_multiple(urls):
         except Exception as e:
             print ("failed at: " + str(i))
     
-
+while(len(urls) < image_cnt):
+    get_images(url)
+    element.send_keys(Keys.PAGE_DOWN)
 # get_images(url)
 # change plan
 # cannot fully download images without opening webbrowser. 
