@@ -88,3 +88,8 @@ while(len(urls) < image_cnt):
 # cannot fully download images without opening webbrowser. 
 # No netlify, just build normal crawler
 # for netlify late people's face for attractiveness based on celebrity trained data.
+
+# change plan
+# open image individually and download from there and move on.
+# check this website
+# https://github.com/ohyicong/Google-Image-Scraper/blob/master/GoogleImageScrapper.py
