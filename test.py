@@ -29,18 +29,21 @@ image_urls=[]
 # imgurl.click()
 # images = driver.find_elements_by_class_name("n3VNCb")
 
-for i in range(1,4):
+for i in range(1,10):
     imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
     imgurl.click()
 
     #select image from the popup
     time.sleep(3)
-    print(i)
     images = driver.find_elements_by_class_name("n3VNCb")
     for image in images:
     # print(image.get_attribute("src"))
-        image_urls.append(image.get_attribute("src"))
-
+        # if (image.get_attribute("src")[-3:].lower() in ["jpg","png","jpeg"]):
+        if (image.get_attribute("src")[0:5] == "https"):
+            # print(image.get_attribute("src")[0:5])
+            image_urls.append(image.get_attribute("src"))
+    
+    driver.execute_script("window.scrollTo(0, "+str(i*150)+");")
 
 # for image in images:
 #     # print(image.get_attribute("src"))
