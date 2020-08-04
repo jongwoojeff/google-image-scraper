@@ -29,22 +29,24 @@ image_urls=[]
 # imgurl.click()
 # images = driver.find_elements_by_class_name("n3VNCb")
 
-for i in range(1,10):
+for i in range(1,100):
     imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
     imgurl.click()
 
     #select image from the popup
-    time.sleep(3)
+    # 2 sceonds is more accurate than 1 
+    time.sleep(2)
     images = driver.find_elements_by_class_name("n3VNCb")
     for image in images:
     # print(image.get_attribute("src"))
         # if (image.get_attribute("src")[-3:].lower() in ["jpg","png","jpeg"]):
         if (image.get_attribute("src")[0:5] == "https"):
             # print(image.get_attribute("src")[0:5])
+            if (image.get_attribute("src")[8:17] == "encrypted"):
+                continue
             image_urls.append(image.get_attribute("src"))
     
     driver.execute_script("window.scrollTo(0, "+str(i*150)+");")
-
 # for image in images:
 #     # print(image.get_attribute("src"))
 #     image_urls.append(image.get_attribute("src"))
@@ -61,10 +63,13 @@ def test_multiple(urls):
     for i in range(len(urls)):
         try:
             file_path = dir_path + "/" + "test" + str(i) + ".jpg"
+            # print ("success at: " +str(i) + " "+ urls[i])
             urllib.request.urlretrieve(urls[i], file_path)
         except Exception as e:
             print ("failed at: " + str(i))
+
 # test_single(image)
 # print(image_urls[0])
-image_urls = list(dict.fromkeys(image_urls))
+
+# image_urls = list(dict.fromkeys(image_urls))
 test_multiple(image_urls)
