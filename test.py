@@ -15,9 +15,6 @@ dir_path = img_dir + "test"
 # test opening browser
 # test clicking on images and getting urls
 print("opening URL")
-# print("How many images?")
-# image_cnt = int(input())
-# print("Getting " + str(image_cnt) + " images...")
 # path for mac
 driver = webdriver.Chrome("./chromedriver")
 # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
