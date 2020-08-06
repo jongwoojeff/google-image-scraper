@@ -14,7 +14,30 @@ dir_path = img_dir + "test"
 
 # test opening browser
 # test clicking on images and getting urls
-print("opening URL")
+def get_input():
+    print("Enter a keyword")
+    keyword = input()
+    print("Enter a number of " + keyword + " images to get")
+    img_count = input()
+    return keyword, img_count
+
+def url_builder():
+    # build url with keyword
+    # return url
+    return
+
+def get_image_urls(url, img_count):
+    # get image urls
+    #  return urls[]
+    return
+
+def make_dir():
+    return
+
+def download_images(urls):
+    # save urls to image
+    return
+    
 # path for mac
 driver = webdriver.Chrome("./chromedriver")
 # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
