@@ -19,8 +19,22 @@ def get_input():
     keyword = input()
     print("Enter a number of " + keyword + " images to get")
     img_count = input()
+    valid_input = False
+    while (valid_input == False):
+        try:
+            img_count = int(img_count)
+            if (img_count > 1):
+                valid_input = True
+            else:
+                print("Number must be greater than 1")
+                img_count = input()
+        except ValueError:
+            print("That's not an integer!") 
+            img_count = input()      
+    
     return keyword, img_count
 
+get_input()
 def url_builder():
     # build url with keyword
     # return url
@@ -39,45 +53,38 @@ def download_images(urls):
     return
     
 # path for mac
-driver = webdriver.Chrome("./chromedriver")
-# driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
-driver.get(url)
+# driver = webdriver.Chrome("./chromedriver")
+# # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+# driver.get(url)
 
-element = driver.find_element_by_tag_name("body")
-image_urls=[]
+# element = driver.find_element_by_tag_name("body")
+# image_urls=[]
 # imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(7)))
 # imgurl.click()
 # images = driver.find_elements_by_class_name("n3VNCb")
 
-for i in range(1,100):
-    imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
-    imgurl.click()
+# for i in range(1,100):
+#     imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
+#     imgurl.click()
 
-    #select image from the popup
-    # 2 sceonds is more accurate than 1 
-    time.sleep(2)
-    images = driver.find_elements_by_class_name("n3VNCb")
-    for image in images:
-    # print(image.get_attribute("src"))
-        # if (image.get_attribute("src")[-3:].lower() in ["jpg","png","jpeg"]):
-        if (image.get_attribute("src")[0:5] == "https"):
-            # print(image.get_attribute("src")[0:5])
-            if (image.get_attribute("src")[8:17] == "encrypted"):
-                continue
-            image_urls.append(image.get_attribute("src"))
+#     #select image from the popup
+#     # 2 sceonds is more accurate than 1 
+#     time.sleep(2)
+#     images = driver.find_elements_by_class_name("n3VNCb")
+#     for image in images:
+#     # print(image.get_attribute("src"))
+#         # if (image.get_attribute("src")[-3:].lower() in ["jpg","png","jpeg"]):
+#         if (image.get_attribute("src")[0:5] == "https"):
+#             # print(image.get_attribute("src")[0:5])
+#             if (image.get_attribute("src")[8:17] == "encrypted"):
+#                 continue
+#             image_urls.append(image.get_attribute("src"))
     
-    driver.execute_script("window.scrollTo(0, "+str(i*150)+");")
+#     driver.execute_script("window.scrollTo(0, "+str(i*150)+");")
 # for image in images:
 #     # print(image.get_attribute("src"))
 #     image_urls.append(image.get_attribute("src"))
 # image = image_urls[0]
-print(len(image_urls))
-def test_single(url):
-    try:
-        file_path = dir_path + "/" + "newTest" + ".jpg"
-        urllib.request.urlretrieve(url, file_path)
-    except Exception as e:
-        print ("failed")
 
 def test_multiple(urls):
     for i in range(len(urls)):
@@ -92,4 +99,4 @@ def test_multiple(urls):
 # print(image_urls[0])
 
 # image_urls = list(dict.fromkeys(image_urls))
-test_multiple(image_urls)
+# test_multiple(image_urls)
