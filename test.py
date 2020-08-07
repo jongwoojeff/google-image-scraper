@@ -34,11 +34,11 @@ def get_input():
     
     return keyword, img_count
 
-get_input()
-def url_builder():
+def url_builder(keyword):
     # build url with keyword
     # return url
-    return
+    url = "https://www.google.com/search?q=" + keyword + "&rlz=1C1SQJL_enKR858KR858&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjvyIThp8_qAhUcwosBHb2ZDwAQ_AUoAXoECBgQAw&biw=1920&bih=937"
+    return url
 
 def get_image_urls(url, img_count):
     # get image urls
@@ -54,8 +54,8 @@ def download_images(urls):
     
 # path for mac
 # driver = webdriver.Chrome("./chromedriver")
-# # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
-# driver.get(url)
+# driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+# driver.get(url_builder("dog"))
 
 # element = driver.find_element_by_tag_name("body")
 # image_urls=[]
