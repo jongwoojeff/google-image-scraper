@@ -32,8 +32,8 @@ def url_builder(keyword):
     return url
 
 def get_image_urls(url, img_count):
-    # driver = webdriver.Chrome("./chromedriver")
-    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+    driver = webdriver.Chrome("./chromedriver")
+    # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
 
     # element = driver.find_element_by_tag_name("body")
@@ -41,26 +41,30 @@ def get_image_urls(url, img_count):
     # imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(7)))
     # imgurl.click()
     # images = driver.find_elements_by_class_name("n3VNCb")
+    try:
+        for i in range(1,img_count+1):
+            # todo
+            # avoid clicking related search
+            imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
+            imgurl.click()
 
-    for i in range(1,img_count+1):
-        imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
-        imgurl.click()
-
-        # select image from the popup
-        # 2 sceonds is more accurate than 1 
-        time.sleep(2)
-        images = driver.find_elements_by_class_name("n3VNCb")
-        for image in images:
-        # print(image.get_attribute("src"))
-            # if (image.get_attribute("src")[-3:].lower() in ["jpg","png","jpeg"]):
-            if (image.get_attribute("src")[0:5] == "https"):
-                # print(image.get_attribute("src")[0:5])
-                if (image.get_attribute("src")[8:17] == "encrypted"):
-                    continue
-                image_urls.append(image.get_attribute("src"))
-    
+            # select image from the popup
+            # 2 sceonds is more accurate than 1 
+            time.sleep(2)
+            images = driver.find_elements_by_class_name("n3VNCb")
+            for image in images:
+                # print(image.get_attribute("src"))
+                # if (image.get_attribute("src")[-3:].lower() in ["jpg","png","jpeg"]):
+                if (image.get_attribute("src")[0:5] == "https"):
+                    if (image.get_attribute("src")[8:17] == "encrypted"):
+                        continue
+                    image_urls.append(image.get_attribute("src"))
         driver.execute_script("window.scrollTo(0, "+str(i*150)+");")
-
+    except Exception: 
+        # more than 40 keeps failing dont know why
+        print("Error: System Crashed. Returning saved image urls.")
+        # driver.close()
+        return image_urls
     # for image in images:
     #     # print(image.get_attribute("src"))
     #     image_urls.append(image.get_attribute("src"))
@@ -84,8 +88,14 @@ def download_images(urls, dir_path, keyword):
     fail_count = 0
     for i in range(len(urls)):
         try:
-            file_path = dir_path + "/" + keyword + str(i + 1) + ".jpg"
-            urllib.request.urlretrieve(urls[i], file_path)
+            file_path = dir_path + "/" + keyword + str(success_count + 1) + ".jpg"
+            # urllib.request.urlretrieve(urls[i], file_path)
+            # second method
+            response = urllib.request.urlopen(urls[i])
+            image = response.read()
+            with open(file_path, "wb") as file:
+                file.write(image)
+
             success_count += 1
         except Exception as e:
             fail_count += 1
