@@ -32,7 +32,8 @@ def url_builder(keyword):
     return url
 
 def get_image_urls(url, img_count):
-    driver = webdriver.Chrome("./chromedriver")
+    # driver = webdriver.Chrome("./chromedriver")
+    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
 
     # element = driver.find_element_by_tag_name("body")
@@ -41,7 +42,7 @@ def get_image_urls(url, img_count):
     # imgurl.click()
     # images = driver.find_elements_by_class_name("n3VNCb")
 
-    for i in range(1,img_count + 1):
+    for i in range(1,img_count+1):
         imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
         imgurl.click()
 
@@ -60,10 +61,13 @@ def get_image_urls(url, img_count):
     
         driver.execute_script("window.scrollTo(0, "+str(i*150)+");")
 
-    for image in images:
-        # print(image.get_attribute("src"))
-        image_urls.append(image.get_attribute("src"))
-    image = image_urls[0]
+    # for image in images:
+    #     # print(image.get_attribute("src"))
+    #     image_urls.append(image.get_attribute("src"))
+    
+    # image_urls = list(dict.fromkeys(image_urls))
+    print("Found " + str(len(image_urls)) + " valid image urls")
+    return image_urls
 
 
 def make_dir(keyword):
@@ -72,14 +76,21 @@ def make_dir(keyword):
         os.makedirs(dir_path)
     return dir_path
 
+# add method to multi thread downloading process
 def download_images(urls, dir_path, keyword):
+    print("Downloading...")
     # save urls to image
+    success_count = 0
+    fail_count = 0
     for i in range(len(urls)):
         try:
             file_path = dir_path + "/" + keyword + str(i + 1) + ".jpg"
             urllib.request.urlretrieve(urls[i], file_path)
+            success_count += 1
         except Exception as e:
-            print ("failed to download from: " + urls[i])
+            fail_count += 1
+    print("Failed to download " + str(fail_count) + " images")
+    print("Downloaded " + str(success_count) + " images")
 # path for mac
 # driver = webdriver.Chrome("./chromedriver")
 # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
