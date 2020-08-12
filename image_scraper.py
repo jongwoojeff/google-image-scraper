@@ -7,6 +7,37 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+def test_func(url, img_count):
+    driver = webdriver.Chrome("./chromedriver")
+    driver.get(url)
+    
+    elem = driver.find_element_by_tag_name("body")
+
+    for i in range(60):
+            elem.send_keys(Keys.PAGE_DOWN)
+            time.sleep(0.2)
+    
+    photo_grid_boxes = driver.find_elements_by_xpath('//div[@class="bRMDJf islir"]')
+
+    links = []
+
+    for box in photo_grid_boxes:
+        try:
+            imgs = box.find_elements_by_tag_name("img")
+            for img in imgs:
+                # self.highlight(img)
+                src = img.get_attribute("src")
+                # Google seems to preload 20 images as base64
+                if str(src).startswith('data:'):
+                    src = img.get_attribute("data-iurl")
+                links.append(src)
+
+        except Exception as e:
+            print('[Exception occurred while collecting links from google] {}'.format(e))
+    return links
+
+
+
 def get_input():
     print("Enter a keyword")
     keyword = input()
@@ -42,10 +73,11 @@ def get_image_urls(url, img_count):
     # imgurl.click()
     # images = driver.find_elements_by_class_name("n3VNCb")
     try:
-        for i in range(1,img_count+1):
+        for i in range(0,img_count):
             # todo
             # avoid clicking related search
-            imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
+            # imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
+            imgurl = driver.find_element_by_xpath('//div[@data-ri="%s"]'%(str(i)))
             imgurl.click()
 
             # select image from the popup
