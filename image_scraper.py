@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+
 def get_input():
     print("Enter a keyword")
     keyword = input()
@@ -32,8 +33,8 @@ def url_builder(keyword):
     return url
 
 def get_image_urls(url, img_count):
-    # driver = webdriver.Chrome("./chromedriver")
-    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+    driver = webdriver.Chrome("./chromedriver")
+    # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
     
     elem = driver.find_element_by_tag_name("body")
@@ -105,3 +106,9 @@ def download_images(urls, dir_path, keyword, img_count):
 
     if (success_count < img_count):
         print("Try searching with synonyms to download more images")
+
+def url_fetcher(url):
+    response = urllib.request.urlopen(urls[i])
+    image = response.read()
+    with open(file_path, "wb") as file:
+        file.write(image)
