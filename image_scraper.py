@@ -7,45 +7,6 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-def test_func(url, img_count):
-    # driver = webdriver.Chrome("./chromedriver")
-    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
-    driver.get(url)
-    
-    elem = driver.find_element_by_tag_name("body")
-
-    for i in range(60):
-        elem.send_keys(Keys.PAGE_DOWN)
-        time.sleep(0.2)
-    
-    button = driver.find_element_by_xpath('//input[@type="button"]')
-    button.click()
-
-    for i in range(60):
-        elem.send_keys(Keys.PAGE_DOWN)
-        time.sleep(0.2)
-    
-    photo_grid_boxes = driver.find_elements_by_xpath('//div[@class="bRMDJf islir"]')
-
-    image_urls = []
-
-    for box in photo_grid_boxes:
-        try:
-            imgs = box.find_elements_by_tag_name("img")
-            for img in imgs:
-                src = img.get_attribute("src")
-                # Google seems to preload 20 images as base64
-                if str(src).startswith('data:'):
-                    src = img.get_attribute("data-iurl")
-                image_urls.append(src)
-
-        except Exception as e:
-            print("Unexpected Error")
-    print(len(image_urls))
-    return image_urls
-
-
-
 def get_input():
     print("Enter a keyword")
     keyword = input()
@@ -71,48 +32,45 @@ def url_builder(keyword):
     return url
 
 def get_image_urls(url, img_count):
-    driver = webdriver.Chrome("./chromedriver")
-    # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+    # driver = webdriver.Chrome("./chromedriver")
+    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
-
-    # element = driver.find_element_by_tag_name("body")
-    image_urls=[]
-    # imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(7)))
-    # imgurl.click()
-    # images = driver.find_elements_by_class_name("n3VNCb")
-    try:
-        for i in range(0,img_count):
-            # todo
-            # avoid clicking related search
-            # imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
-            imgurl = driver.find_element_by_xpath('//div[@data-ri="%s"]'%(str(i)))
-            imgurl.click()
-
-            # select image from the popup
-            # 2 sceonds is more accurate than 1 
-            time.sleep(2)
-            images = driver.find_elements_by_class_name("n3VNCb")
-            for image in images:
-                # print(image.get_attribute("src"))
-                # if (image.get_attribute("src")[-3:].lower() in ["jpg","png","jpeg"]):
-                if (image.get_attribute("src")[0:5] == "https"):
-                    if (image.get_attribute("src")[8:17] == "encrypted"):
-                        continue
-                    image_urls.append(image.get_attribute("src"))
-        driver.execute_script("window.scrollTo(0, "+str(i*150)+");")
-    except Exception: 
-        # more than 40 keeps failing dont know why
-        print("Error: System Crashed. Returning saved image urls.")
-        # driver.close()
-        return image_urls
-    # for image in images:
-    #     # print(image.get_attribute("src"))
-    #     image_urls.append(image.get_attribute("src"))
     
-    # image_urls = list(dict.fromkeys(image_urls))
-    print("Found " + str(len(image_urls)) + " valid image urls")
-    return image_urls
+    elem = driver.find_element_by_tag_name("body")
 
+    for i in range(60):
+        elem.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.2)
+    
+    button = driver.find_element_by_xpath('//input[@type="button"]')
+    button.click()
+
+    for i in range(60):
+        elem.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.2)
+
+    print("Reached end of the search result")
+
+    photo_grid_boxes = driver.find_elements_by_xpath('//div[@class="bRMDJf islir"]')
+
+    image_urls = []
+
+    for box in photo_grid_boxes:
+        try:
+            imgs = box.find_elements_by_tag_name("img")
+            for img in imgs:
+                src = img.get_attribute("src")
+                # Google preloads 20 images as base64
+                if str(src).startswith('data:'):
+                    src = img.get_attribute("data-iurl")
+                image_urls.append(src)
+
+        except Exception:
+            print("Error: System Crashed. Returning saved image urls.")
+            return image_urls
+
+    print("Found " + str(len(image_urls)) + " image urls")
+    return image_urls
 
 def make_dir(keyword):
     dir_path = "./image_folder/" + keyword
@@ -146,4 +104,4 @@ def download_images(urls, dir_path, keyword, img_count):
     print("Downloaded " + str(success_count) + " images")
 
     if (success_count < img_count):
-        print("Try a synonym to download more images")
+        print("Try searching with synonyms to download more images")
