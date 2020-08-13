@@ -8,33 +8,41 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 def test_func(url, img_count):
-    driver = webdriver.Chrome("./chromedriver")
+    # driver = webdriver.Chrome("./chromedriver")
+    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
     
     elem = driver.find_element_by_tag_name("body")
 
     for i in range(60):
-            elem.send_keys(Keys.PAGE_DOWN)
-            time.sleep(0.2)
+        elem.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.2)
+    
+    button = driver.find_element_by_xpath('//input[@type="button"]')
+    button.click()
+
+    for i in range(60):
+        elem.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.2)
     
     photo_grid_boxes = driver.find_elements_by_xpath('//div[@class="bRMDJf islir"]')
 
-    links = []
+    image_urls = []
 
     for box in photo_grid_boxes:
         try:
             imgs = box.find_elements_by_tag_name("img")
             for img in imgs:
-                # self.highlight(img)
                 src = img.get_attribute("src")
                 # Google seems to preload 20 images as base64
                 if str(src).startswith('data:'):
                     src = img.get_attribute("data-iurl")
-                links.append(src)
+                image_urls.append(src)
 
         except Exception as e:
-            print('[Exception occurred while collecting links from google] {}'.format(e))
-    return links
+            print("Unexpected Error")
+    print(len(image_urls))
+    return image_urls
 
 
 
@@ -113,12 +121,15 @@ def make_dir(keyword):
     return dir_path
 
 # add method to multi thread downloading process
-def download_images(urls, dir_path, keyword):
-    print("Downloading...")
+def download_images(urls, dir_path, keyword, img_count):
+    print("Downloading first " + str(img_count) + " images from " + str(len(urls)) + " urls found")
     # save urls to image
     success_count = 0
     fail_count = 0
     for i in range(len(urls)):
+        if (success_count == img_count):
+            break
+
         try:
             file_path = dir_path + "/" + keyword + str(success_count + 1) + ".jpg"
             # urllib.request.urlretrieve(urls[i], file_path)
@@ -129,55 +140,10 @@ def download_images(urls, dir_path, keyword):
                 file.write(image)
 
             success_count += 1
-        except Exception as e:
+        except Exception:
             fail_count += 1
-    print("Failed to download " + str(fail_count) + " images")
+    print("Detected " + str(fail_count) + " invalid links")
     print("Downloaded " + str(success_count) + " images")
-# path for mac
-# driver = webdriver.Chrome("./chromedriver")
-# driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
-# driver.get(url_builder("dog"))
 
-# element = driver.find_element_by_tag_name("body")
-# image_urls=[]
-# imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(7)))
-# imgurl.click()
-# images = driver.find_elements_by_class_name("n3VNCb")
-
-# for i in range(1,100):
-#     imgurl = driver.find_element_by_xpath('//div//div//div//div//div//div//div//div//div//div[%s]//a[1]//div[1]//img[1]'%(str(i)))
-#     imgurl.click()
-
-#     #select image from the popup
-#     # 2 sceonds is more accurate than 1 
-#     time.sleep(2)
-#     images = driver.find_elements_by_class_name("n3VNCb")
-#     for image in images:
-#     # print(image.get_attribute("src"))
-#         # if (image.get_attribute("src")[-3:].lower() in ["jpg","png","jpeg"]):
-#         if (image.get_attribute("src")[0:5] == "https"):
-#             # print(image.get_attribute("src")[0:5])
-#             if (image.get_attribute("src")[8:17] == "encrypted"):
-#                 continue
-#             image_urls.append(image.get_attribute("src"))
-    
-#     driver.execute_script("window.scrollTo(0, "+str(i*150)+");")
-# for image in images:
-#     # print(image.get_attribute("src"))
-#     image_urls.append(image.get_attribute("src"))
-# image = image_urls[0]
-
-# def test_multiple(urls):
-#     for i in range(len(urls)):
-#         try:
-#             file_path = dir_path + "/" + "test" + str(i) + ".jpg"
-#             # print ("success at: " +str(i) + " "+ urls[i])
-#             urllib.request.urlretrieve(urls[i], file_path)
-#         except Exception as e:
-#             print ("failed at: " + str(i))
-
-# test_single(image)
-# print(image_urls[0])
-
-# image_urls = list(dict.fromkeys(image_urls))
-# test_multiple(image_urls)
+    if (success_count < img_count):
+        print("Try a synonym to download more images")
