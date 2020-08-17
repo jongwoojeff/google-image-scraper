@@ -3,6 +3,7 @@ import webbrowser
 import urllib.request
 import os
 import time
+import threading
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -43,12 +44,12 @@ def get_image_urls(url, img_count):
         elem.send_keys(Keys.PAGE_DOWN)
         time.sleep(0.2)
     
-    button = driver.find_element_by_xpath('//input[@type="button"]')
-    button.click()
+    # button = driver.find_element_by_xpath('//input[@type="button"]')
+    # button.click()
 
-    for i in range(60):
-        elem.send_keys(Keys.PAGE_DOWN)
-        time.sleep(0.2)
+    # for i in range(60):
+    #     elem.send_keys(Keys.PAGE_DOWN)
+    #     time.sleep(0.2)
 
     print("Reached end of the search result")
 
@@ -81,6 +82,7 @@ def make_dir(keyword):
 
 # add method to multi thread downloading process
 def download_images(urls, dir_path, keyword, img_count):
+    start_time = time.time()
     print("Downloading first " + str(img_count) + " images from " + str(len(urls)) + " urls found")
     # save urls to image
     success_count = 0
@@ -93,22 +95,24 @@ def download_images(urls, dir_path, keyword, img_count):
             file_path = dir_path + "/" + keyword + str(success_count + 1) + ".jpg"
             # urllib.request.urlretrieve(urls[i], file_path)
             # second method
-            response = urllib.request.urlopen(urls[i])
-            image = response.read()
-            with open(file_path, "wb") as file:
-                file.write(image)
-
+            # response = urllib.request.urlopen(urls[i])
+            # image = response.read()
+            # with open(file_path, "wb") as file:
+            #     file.write(image)
+            url_fetcher(urls[i], file_path)
             success_count += 1
         except Exception:
             fail_count += 1
     print("Detected " + str(fail_count) + " invalid links")
     print("Downloaded " + str(success_count) + " images")
+    print("---Took %s seconds ---" % (time.time() - start_time))
 
     if (success_count < img_count):
         print("Try searching with synonyms to download more images")
 
-def url_fetcher(url):
-    response = urllib.request.urlopen(urls[i])
+# try multithreading
+def url_fetcher(url, file_path):
+    response = urllib.request.urlopen(url)
     image = response.read()
     with open(file_path, "wb") as file:
         file.write(image)
