@@ -34,8 +34,8 @@ def url_builder(keyword):
     return url
 
 def get_image_urls(url, img_count):
-    driver = webdriver.Chrome("./chromedriver")
-    # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+    # driver = webdriver.Chrome("./chromedriver")
+    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
     
     elem = driver.find_element_by_tag_name("body")
@@ -95,11 +95,11 @@ def download_images(urls, dir_path, keyword, img_count):
             file_path = dir_path + "/" + keyword + str(success_count + 1) + ".jpg"
             # urllib.request.urlretrieve(urls[i], file_path)
             # second method
-            # response = urllib.request.urlopen(urls[i])
-            # image = response.read()
-            # with open(file_path, "wb") as file:
-            #     file.write(image)
-            url_fetcher(urls[i], file_path)
+            response = urllib.request.urlopen(urls[i])
+            image = response.read()
+            with open(file_path, "wb") as file:
+                file.write(image)
+            
             success_count += 1
         except Exception:
             fail_count += 1
@@ -109,10 +109,3 @@ def download_images(urls, dir_path, keyword, img_count):
 
     if (success_count < img_count):
         print("Try searching with synonyms to download more images")
-
-# try multithreading
-def url_fetcher(url, file_path):
-    response = urllib.request.urlopen(url)
-    image = response.read()
-    with open(file_path, "wb") as file:
-        file.write(image)

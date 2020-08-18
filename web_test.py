@@ -1,37 +1,69 @@
 import requests
 import threading
-from bs4 import BeautifulSoup
-import os # not mandatory
+import urllib.request
+import os
+import time
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
-URLS = [
-  'https://pastpapers.papacambridge.com/?dir=Cambridge%20International%20Examinations%20%28CIE%29/AS%20and%20A%20Level/Business%20%28for%20first%20examination%20in%202016%29%20-%209609/2019-May-June',
-  'https://pastpapers.papacambridge.com/?dir=Cambridge%20International%20Examinations%20%28CIE%29/AS%20and%20A%20Level/Business%20%28for%20first%20examination%20in%202016%29%20-%209609/2018-Oct-Nov',
-  'https://pastpapers.papacambridge.com/?dir=Cambridge%20International%20Examinations%20%28CIE%29/AS%20and%20A%20Level/Business%20%28for%20first%20examination%20in%202016%29%20-%209609/2018-May-June',
-  'https://pastpapers.papacambridge.com/?dir=Cambridge%20International%20Examinations%20%28CIE%29/AS%20and%20A%20Level/Business%20%28for%20first%20examination%20in%202016%29%20-%209609/2018-March'
-]
+url = "https://www.google.com/search?q=dog&source=lnms&tbm=isch&sa=X&ved=2ahUKEwis942FiKTrAhXbMHAKHZT7BwMQ_AUoAXoECBoQAw&biw=1440&bih=789"
 
-def downloadPage(URL, folder):
-  os.mkdir(folder) # create folder
-  BASEURL = 'https://pastpapers.papacambridge.com/'
-  download_urls = []
+dir_path = "./image_folder/" + "test"
+if not os.path.exists(dir_path):
+  os.makedirs(dir_path)
 
-  page = requests.get(URL).text # get the raw HTML of the page
-  soup = BeautifulSoup(page) # make our page easy to navigate
+def get_image_urls(url):
+    # driver = webdriver.Chrome("./chromedriver")
+    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+    driver.get(url)
+    
+    elem = driver.find_element_by_tag_name("body")
 
-  for a in soup.find_all('a'): # iterate through every <a> tag on the page
-    href = a['href'] # get the href attribute of the tag
-    if a.text == 'Download': # if the link ends in .pdf
-      downloadLink = BASEURL + href # create the download url
-      download_urls.append(downloadLink) # add the link to our array
+    for i in range(10):
+        elem.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.2)
 
-  for file in download_urls: # for each index and file in download_urls
-    fileName = file.split('/')[-1] # the text after the last / is the file name we want
-    fileRequest = requests.get(file) # download the file
-    with open(os.path.join(folder, fileName), 'wb') as examFile: # open a new file in write and binary mode
-      examFile.write(fileRequest.content) # write the content of the downloaded file
+    print("Reached end of the search result")
 
-for url in URLS:
-  folderName = url.split('/')[-1] # the name of the folder
-  processThread = threading.Thread(
-    target=downloadPage, args=(url, folderName)) # parameters and functions have to be passed separately
-  processThread.start() # start the thread
+    photo_grid_boxes = driver.find_elements_by_xpath('//div[@class="bRMDJf islir"]')
+
+    image_urls = []
+
+    for box in photo_grid_boxes:
+        try:
+            imgs = box.find_elements_by_tag_name("img")
+            for img in imgs:
+                src = img.get_attribute("src")
+                # Google preloads 20 images as base64
+                if str(src).startswith('data:'):
+                    src = img.get_attribute("data-iurl")
+                image_urls.append(src)
+
+        except Exception:
+            print("Error: System Crashed. Returning saved image urls.")
+            return image_urls
+
+    print("Found " + str(len(image_urls)) + " image urls")
+    return image_urls
+
+# get_image_urls(url)
+
+def fetch_url(url, i):
+      try:
+        file_path = dir_path + "/" + "test" + str(i) + ".jpg"
+        # urllib.request.urlretrieve(urls[i], file_path)
+        # second method
+        response = urllib.request.urlopen(url)
+        image = response.read()
+        with open(file_path, "wb") as file:
+            file.write(image)
+        
+      except Exception:
+        print("shit")
+
+urls = get_image_urls(url)
+
+for i in range(len(urls)):
+  # processThread = threading.Thread(target=fetch_url, args=(urls[i], i))
+  # processThread.start()
+  fetch_url(urls[i], i)
