@@ -13,13 +13,20 @@ if not os.path.exists(dir_path):
   os.makedirs(dir_path)
 
 def get_image_urls(url):
-    # driver = webdriver.Chrome("./chromedriver")
-    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+    driver = webdriver.Chrome("./chromedriver")
+    # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
     
     elem = driver.find_element_by_tag_name("body")
 
-    for i in range(10):
+    for i in range(60):
+        elem.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.2)
+    
+    button = driver.find_element_by_xpath('//input[@type="button"]')
+    button.click()
+
+    for i in range(60):
         elem.send_keys(Keys.PAGE_DOWN)
         time.sleep(0.2)
 
@@ -57,13 +64,28 @@ def fetch_url(url, i):
         image = response.read()
         with open(file_path, "wb") as file:
             file.write(image)
-        
+    
       except Exception:
-        print("shit")
+        print("Failed at : " + str(i))
 
-urls = get_image_urls(url)
 
-for i in range(len(urls)):
-  # processThread = threading.Thread(target=fetch_url, args=(urls[i], i))
-  # processThread.start()
-  fetch_url(urls[i], i)
+def main():
+    urls = get_image_urls(url)
+    threads = list()
+    start_time = time.time()
+    for i in range(len(urls)):
+        processThread = threading.Thread(target=fetch_url, args=(urls[i], i))
+        threads.append(processThread)
+        processThread.start()
+    for thread in threads:
+        thread.join()
+    print("Failed :" + str(len(urls) - len(os.listdir(dir_path))))
+    print("---Took %s seconds ---" % (time.time() - start_time))
+    
+main()
+# for count, filename in enumerate(os.listdir(dir_path)):
+#     dst ="test" + str(count) + ".jpg"
+#     src =dir_path+ "/" + filename 
+#     dst =dir_path+ "/" + dst 
+#     os.rename(src, dst) 
+

@@ -34,8 +34,8 @@ def url_builder(keyword):
     return url
 
 def get_image_urls(url, img_count):
-    # driver = webdriver.Chrome("./chromedriver")
-    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+    driver = webdriver.Chrome("./chromedriver")
+    # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
     
     elem = driver.find_element_by_tag_name("body")
@@ -44,12 +44,12 @@ def get_image_urls(url, img_count):
         elem.send_keys(Keys.PAGE_DOWN)
         time.sleep(0.2)
     
-    # button = driver.find_element_by_xpath('//input[@type="button"]')
-    # button.click()
+    button = driver.find_element_by_xpath('//input[@type="button"]')
+    button.click()
 
-    # for i in range(60):
-    #     elem.send_keys(Keys.PAGE_DOWN)
-    #     time.sleep(0.2)
+    for i in range(60):
+        elem.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.2)
 
     print("Reached end of the search result")
 
