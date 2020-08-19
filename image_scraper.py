@@ -34,8 +34,8 @@ def url_builder(keyword):
     return url
 
 def get_image_urls(url, img_count):
-    driver = webdriver.Chrome("./chromedriver")
-    # driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
+    # driver = webdriver.Chrome("./chromedriver")
+    driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
     
     elem = driver.find_element_by_tag_name("body")
@@ -109,3 +109,37 @@ def download_images(urls, dir_path, keyword, img_count):
 
     if (success_count < img_count):
         print("Try searching with synonyms to download more images")
+
+def download_images_multithread(url, i, dir_path, keyword):
+    try:
+        file_path = dir_path + "/" + keyword + str(i) + ".jpg"
+        # urllib.request.urlretrieve(urls[i], file_path)
+        # second method
+        response = urllib.request.urlopen(url)
+        image = response.read()
+        with open(file_path, "wb") as file:
+            file.write(image)
+    
+    except Exception:
+        print("Failed at : " + str(i))
+
+def set_multithread(urls, dir_path, keyword, img_count):
+    threads = list()
+    start_time = time.time()
+
+    for i in range(len(urls)):
+        processThread = threading.Thread(target=download_images_multithread, args=(urls[i], i, dir_path, keyword))
+        threads.append(processThread)
+        processThread.start()
+
+    for thread in threads:
+        thread.join()
+    
+    # rename files
+    for count, filename in enumerate(os.listdir(dir_path)):
+        dst = keyword + str(count) + ".jpg"
+        src = dir_path+ "/" + filename 
+        dst = dir_path+ "/" + dst 
+        os.rename(src, dst) 
+    print("Failed :" + str(len(urls) - len(os.listdir(dir_path))))
+    print("---Took %s seconds ---" % (time.time() - start_time))

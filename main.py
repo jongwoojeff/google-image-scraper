@@ -8,6 +8,7 @@ keyword, img_count = ims.get_input()
 url = ims.url_builder(keyword)
 image_urls = ims.get_image_urls(url, img_count)
 path = ims.make_dir(keyword)
-ims.download_images(image_urls, path, keyword, img_count)
+# ims.download_images(image_urls, path, keyword, img_count)
+ims.set_multithread(image_urls, path, keyword, img_count)
 
 # add a function to continue downloading for more
