@@ -2,12 +2,17 @@ import requests
 import webbrowser
 import urllib.request
 import os
-import time
 import threading
-from bs4 import BeautifulSoup
+import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+def download_whole():
+    print("Download entire search result or partial? (y/n) defualt: partial")
+    thread = input()
+    if (thread == 'y'):
+        return True
+    return False
 
 def get_input():
     print("Enter a keyword")
@@ -33,7 +38,7 @@ def url_builder(keyword):
     url = "https://www.google.com/search?q=" + keyword + "&rlz=1C1SQJL_enKR858KR858&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjvyIThp8_qAhUcwosBHb2ZDwAQ_AUoAXoECBgQAw&biw=1920&bih=937"
     return url
 
-def get_image_urls(url, img_count):
+def get_image_urls(url):
     # driver = webdriver.Chrome("./chromedriver")
     driver = webdriver.Chrome("/Users/jeff/Desktop/chromedriver")
     driver.get(url)
@@ -80,13 +85,13 @@ def make_dir(keyword):
         os.makedirs(dir_path)
     return dir_path
 
-# add method to multi thread downloading process
+# download function without multithreading
 def download_images(urls, dir_path, keyword, img_count):
-    start_time = time.time()
     print("Downloading first " + str(img_count) + " images from " + str(len(urls)) + " urls found")
-    # save urls to image
+    
     success_count = 0
     fail_count = 0
+
     for i in range(len(urls)):
         if (success_count == img_count):
             break
@@ -105,41 +110,38 @@ def download_images(urls, dir_path, keyword, img_count):
             fail_count += 1
     print("Detected " + str(fail_count) + " invalid links")
     print("Downloaded " + str(success_count) + " images")
-    print("---Took %s seconds ---" % (time.time() - start_time))
 
     if (success_count < img_count):
         print("Try searching with synonyms to download more images")
 
+# download function with multithreading
 def download_images_multithread(url, i, dir_path, keyword):
     try:
         file_path = dir_path + "/" + keyword + str(i) + ".jpg"
-        # urllib.request.urlretrieve(urls[i], file_path)
-        # second method
         response = urllib.request.urlopen(url)
         image = response.read()
         with open(file_path, "wb") as file:
             file.write(image)
-    
     except Exception:
-        print("Failed at : " + str(i))
+        return
 
-def set_multithread(urls, dir_path, keyword, img_count):
+def set_multithread(urls, dir_path, keyword):
     threads = list()
-    start_time = time.time()
-
+    
     for i in range(len(urls)):
         processThread = threading.Thread(target=download_images_multithread, args=(urls[i], i, dir_path, keyword))
         threads.append(processThread)
         processThread.start()
-
+    
     for thread in threads:
         thread.join()
     
     # rename files
-    for count, filename in enumerate(os.listdir(dir_path)):
-        dst = keyword + str(count) + ".jpg"
-        src = dir_path+ "/" + filename 
-        dst = dir_path+ "/" + dst 
-        os.rename(src, dst) 
-    print("Failed :" + str(len(urls) - len(os.listdir(dir_path))))
-    print("---Took %s seconds ---" % (time.time() - start_time))
+    # for count, filename in enumerate(os.listdir(dir_path)):
+    #     dst = keyword + str(count + 1) + ".jpg"
+    #     src = dir_path+ "/" + filename 
+    #     dst = dir_path+ "/" + dst 
+    #     os.rename(src, dst) 
+    print("Detected " + str(len(urls) - len(os.listdir(dir_path))) + " invalid urls")
+    print("Downloaded " + str(len(os.listdir(dir_path))) + " images")
+    print("Try searching with synonyms to download more images")
