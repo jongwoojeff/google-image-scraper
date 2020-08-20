@@ -17,6 +17,7 @@ path = ims.make_dir(keyword)
 
 if (thread == True):
     ims.set_multithread(image_urls, path, keyword)
+    ims.rename_files(keyword, path)
 else:
     ims.download_images(image_urls, path, keyword, img_count)
 

@@ -122,6 +122,7 @@ def download_images_multithread(url, i, dir_path, keyword):
         image = response.read()
         with open(file_path, "wb") as file:
             file.write(image)
+        # urllib.request.urlretrieve(url, file_path)
     except Exception:
         return
 
@@ -136,12 +137,13 @@ def set_multithread(urls, dir_path, keyword):
     for thread in threads:
         thread.join()
     
-    # rename files
-    # for count, filename in enumerate(os.listdir(dir_path)):
-    #     dst = keyword + str(count + 1) + ".jpg"
-    #     src = dir_path+ "/" + filename 
-    #     dst = dir_path+ "/" + dst 
-    #     os.rename(src, dst) 
     print("Detected " + str(len(urls) - len(os.listdir(dir_path))) + " invalid urls")
     print("Downloaded " + str(len(os.listdir(dir_path))) + " images")
     print("Try searching with synonyms to download more images")
+
+def rename_files(keyword, path):
+    for count, filename in enumerate(os.listdir(path)):
+        dst = keyword + str(count + 1) + ".jpg"
+        src = path+ "/" + filename 
+        dst = path+ "/" + dst 
+        os.rename(src, dst) 
