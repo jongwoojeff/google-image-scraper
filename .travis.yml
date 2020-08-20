@@ -3,7 +3,6 @@ python:
   - 3.8
 install:
   - pip install requests
-  - pip install webdriver
-  - pip install keys
+  - pip install selenium
 script:
   - python main.py
