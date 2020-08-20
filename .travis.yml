@@ -3,7 +3,6 @@ python:
   - 3.8
 install:
   - pip install requests
-  - pip install webbrowser
   - pip install threading
   - pip install time
   - pip install os
