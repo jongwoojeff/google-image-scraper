@@ -1,5 +1,14 @@
 language: python
 python:
   - 3.8
+install:
+  - pip install requests
+  - pip install webbrowser
+  - pip install threading
+  - pip install time
+  - pip install os
+  - pip install urllib
+  - pip install webdriver
+  - pip install keys
 script:
   - python main.py
