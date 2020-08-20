@@ -11,3 +11,6 @@ This project was built with Python3
    
 ## Issues
 Google often updates its HTML tags or structures to avoid web scrapping. This scrapper has been adopted the most recent changes. However, it may become obsolete with new changes so feel free to pull issues if you encounter one. 
+
+## Disclaimer
+This program does not filter images from Google; it merely indexes images and does not produce its own images. Please do not download any images that violate their copyright terms. This program is not responsible for your violation of copyrights. 
