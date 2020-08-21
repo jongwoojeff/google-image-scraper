@@ -5,4 +5,4 @@ install:
   - pip install requests
   - pip install selenium
 script:
-  - python main.py
+  - python test.py
