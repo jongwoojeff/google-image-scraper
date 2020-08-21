@@ -1,3 +1,4 @@
+![Build Status](https://travis-ci.com/jongwoojeff/google-image-scrapper.svg?branch=master)
 # google-image-scrapper
 This is a simple image scrapper that scrapes images from google search results and utlizes multithreading to increase downlaod speed.
 
